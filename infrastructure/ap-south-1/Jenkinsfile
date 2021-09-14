@@ -47,7 +47,7 @@ pipeline {
                             '\n    }\n  }\n}'
                     sh """
                         cat provider.tf
-                        terraform init
+                        terraform -chdir=infrastructure/ap-south-1/ init
                         """
                 }
             }
@@ -56,7 +56,7 @@ pipeline {
             steps {
                 sh """
                     terraform workspace show
-                    pwd;terraform plan -out tfplan -input=false
+                    pwd;terraform plan -out tfplan -input=false -chdir=infrastructure/ap-south-1/
                     pwd;terraform show -no-color tfplan > tfplan.txt
                     """
             }
