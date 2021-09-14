@@ -14,16 +14,16 @@ pipeline {
     }
 
     stages {
-        stage('init'){
-            steps{
-                script{
-                            cleanWs(cleanWhenNotBuilt: false,
-                                    deleteDirs: true,
-                                    disableDeferredWipeout: true,
-                                    notFailBuild: true)
-                        }
-            }
-        }
+        // stage('init'){
+        //     steps{
+        //         script{
+        //                     cleanWs(cleanWhenNotBuilt: false,
+        //                             deleteDirs: true,
+        //                             disableDeferredWipeout: true,
+        //                             notFailBuild: true)
+        //                 }
+        //     }
+        // }
 
         stage('creating terraform.tfvars file') {
             steps {
