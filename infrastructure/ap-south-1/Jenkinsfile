@@ -1,5 +1,5 @@
-import groovy.json.JsonSlurper
-import org.apache.commons.codec.digest.DigestUtils
+// import groovy.json.JsonSlurper
+// import org.apache.commons.codec.digest.DigestUtils
 
 pipeline {
 
@@ -13,7 +13,7 @@ pipeline {
         region = 'ap-south-1'
     }
 
-    stages{
+    stages {
         stage('init'){
             steps{
                 script{
@@ -41,13 +41,13 @@ pipeline {
         stage('creating providers.tf file') {
             steps {
                 script {
-                    writeFile file: 'terraform.tf', text: 'terraform {\n  backend "s3" {\n    bucket = "raghib-sc-terraform-backend"' +
+                    writeFile file: 'provider.tf', text: 'terraform {\n  backend "s3" {\n    bucket = "raghib-sc-terraform-backend"' +
                             '\n    key = "global/ap-south-1"\n    region = "ap-south-1"\n    skip_credentials_validation = true\n' +
                             '  }\n  required_providers {\n    aws = {\n      source  = "hashicorp/aws"\n      version = "~> 3.46.0"' +
                             '\n    }\n  }\n}'
                     sh """
-                        cat terraform.tf
-                        ${terraformCmd} init
+                        cat provider.tf
+                        terraform init
                         """
                 }
             }
@@ -55,9 +55,9 @@ pipeline {
         stage('terraforma_plan') {
             steps {
                 sh """
-                    ${terraformCmd} workspace show
-                    pwd;${terraformCmd} plan -out tfplan -input=false
-                    pwd;${terraformCmd} show -no-color tfplan > tfplan.txt
+                    terraform workspace show
+                    pwd;terraform plan -out tfplan -input=false
+                    pwd;terraform show -no-color tfplan > tfplan.txt
                     """
             }
         }
