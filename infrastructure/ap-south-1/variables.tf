@@ -1,4 +1,4 @@
-variable "region" {}
+variable "REGION" {}
 
 variable "Principal_Region" {
   type = map(string)
