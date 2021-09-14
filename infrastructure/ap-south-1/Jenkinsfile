@@ -1,7 +1,6 @@
-import groovy.json.JsonSlurper
-import org.apache.commons.codec.digest.DigestUtils
-
 pipeline {
+
+    agent any
 
     parameters {
         booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
