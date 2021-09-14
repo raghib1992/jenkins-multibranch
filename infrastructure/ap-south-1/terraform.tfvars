@@ -1,2 +1,2 @@
 SC_PURPOSE = "saas-global"
-REGION = "us-west-2"
+region = "us-west-2"
