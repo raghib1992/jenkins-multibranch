@@ -32,7 +32,7 @@ pipeline {
                     // region = processInputParams(awsCityRegionMap, region)
                     sh """
                         pwd;ls -l
-                        echo REGION = \\\"${region}\\\" >> terraform.tfvars
+                        echo REGION = \\\"${region}\\\" > terraform.tfvars
                         cat terraform.tfvars
                         """
                 }
