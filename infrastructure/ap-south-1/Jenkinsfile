@@ -1,3 +1,6 @@
+import groovy.json.JsonSlurper
+import org.apache.commons.codec.digest.DigestUtils
+
 pipeline {
 
     parameters {
