@@ -1,3 +1,6 @@
+import groovy.json.JsonSlurper
+import org.apache.commons.codec.digest.DigestUtils
+
 pipeline {
 
     agent any
@@ -22,7 +25,7 @@ pipeline {
             }
         }
 
-        stage('creating terraform.tfvars file'){
+        stage('creating terraform.tfvars file') {
             steps {
                 echo 'Creating new terraform.tfvars file as per new inputs'
                 script {
@@ -35,8 +38,8 @@ pipeline {
                 }
             }
         }
-        stage('creating providers.tf file'){
-            steps{
+        stage('creating providers.tf file') {
+            steps {
                 script {
                     writeFile file: 'terraform.tf', text: 'terraform {\n  backend "s3" {\n    bucket = "raghib-sc-terraform-backend"' +
                             '\n    key = "global/ap-south-1"\n    region = "ap-south-1"\n    skip_credentials_validation = true\n' +
