@@ -5,7 +5,7 @@ provider "aws" {
 data "aws_caller_identity" "current" {}
 
 terraform {
-  backend "s3" = {
+  backend "s3" {
     bucket                      = "raghib-sc-terraform-backend"
     key                         = "global/ap-south-1"
     region                      = "ap-south-1"
