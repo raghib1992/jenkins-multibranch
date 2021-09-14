@@ -39,7 +39,7 @@ pipeline {
         // }
         stage('creating providers.tf file') {
             steps {
-                terraform init -backend-config=infrastructure/ap-south-1/providers.tf
+                sh 'terraform init -backend-config=infrastructure/ap-south-1/providers.tf'
             }
             // steps {
             //     script {
