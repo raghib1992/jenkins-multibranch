@@ -38,11 +38,13 @@ pipeline {
         //     }
         // }
         stage('creating providers.tf file') {
-            dir('infrastructure/ap-south-1') {
                 steps {
-                    sh 'terraform init'
+                    script {
+                        dir('infrastructure/ap-south-1') {
+                            sh 'terraform init'
+                        }
+                    }
                 }
-            }
             // steps {
             //     script {
             //         // writeFile file: 'provider.tf', text: 'terraform {\n  backend "s3" {\n    bucket = "raghib-sc-terraform-backend"' +
