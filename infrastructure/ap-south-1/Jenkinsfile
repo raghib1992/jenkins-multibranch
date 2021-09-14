@@ -79,7 +79,7 @@ pipeline {
             steps {
                 echo 'running apply stage'
                 sh """
-                    pwd;${terraformCmd} apply -input=false tfplan
+                    pwd;terraform$ apply -input=false tfplan
                     """ 
             }
         }
