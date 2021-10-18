@@ -13,9 +13,6 @@ pipeline {
                         stage (entry.key) {
                             sh """
                                 echo REGION = \\\"${entry.value}\\\" >> terraform.tfvars
-                                terraform -chdir=jenkins-loop init
-                                terraform -chdir=jenkins-loop plan -out tfplan -input=false
-                                terraform -chdir=jenkins-loop show tfplan >> tfplan.txt
                                 """
                         }
 
