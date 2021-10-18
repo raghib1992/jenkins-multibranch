@@ -1,93 +1,27 @@
-// import groovy.json.JsonSlurper
-// import org.apache.commons.codec.digest.DigestUtils
-
+def map = [
+    "mumbai" : "ap-south-1",
+    "seoul"  : "ap-northeast-2"
+]
 pipeline {
-
     agent any
 
-    // parameters {
-    //     booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
-    // }
-
-    // environment {
-    //     region = 'ap-south-1'
-    // }
-
     stages {
-        // stage('init'){
-        //     steps{
-        //         script{
-        //                     cleanWs(cleanWhenNotBuilt: false,
-        //                             deleteDirs: true,
-        //                             disableDeferredWipeout: true,
-        //                             notFailBuild: true)
-        //                 }
-        //     }
-        // }
-
-        // stage('creating terraform.tfvars file') {
-        //     steps {
-        //         echo 'Creating new terraform.tfvars file as per new inputs'
-        //         script {
-        //             // region = processInputParams(awsCityRegionMap, region)
-        //             sh """
-        //                 pwd;ls -l
-        //                 cat terraform.tfvars
-        //                 """
-        //         }
-        //     }
-        // }
-        stage('creating providers.tf file') {
-                steps {
-                    script {
-                        dir('infrastructure/ap-south-1') {
-                            sh 'terraform init'
+        stage('loop'){
+            steps{
+                script {
+                    map.each { entry ->
+                        stage (entry.key) {
+                            sh """
+                                echo REGION = \\\"${entry.value}\\\" >> terraform.tfvars
+                                terraform -chdir=jenkins-loop init
+                                terraform -chdir=jenkins-loop plan -out tfplan -input=false
+                                terraform -chdir=jenkins-loop show tfplan >> tfplan.txt
+                                """
                         }
+
                     }
                 }
-            // steps {
-            //     script {
-            //         // writeFile file: 'provider.tf', text: 'terraform {\n  backend "s3" {\n    bucket = "raghib-sc-terraform-backend"' +
-            //         //         '\n    key = "global/ap-south-1"\n    region = "ap-south-1"\n    skip_credentials_validation = true\n' +
-            //         //         '  }\n  required_providers {\n    aws = {\n      source  = "hashicorp/aws"\n      version = "~> 3.46.0"' +
-            //         //         '\n    }\n  }\n}'
-            //         sh """
-            //             // cat provider.tf
-            //             terraform init 
-            //             """
-            //     }
-            // }
+            }
         }
-        // stage('terraforma_plan') {
-        //     steps {
-        //         sh """
-        //             terraform workspace show
-        //             pwd;terraform plan -out tfplan -input=false -chdir=infrastructure/ap-south-1/
-        //             pwd;terraform show -no-color tfplan > tfplan.txt
-        //             """
-        //     }
-        // }
-        // stage('Approval') {
-        //     when {
-        //         not {
-        //             equals expected: true, actual: params.autoApprove
-        //         }
-        //     }
-        //     steps {
-        //         script {
-        //                 def plan = readFile 'tfplan.txt'
-        //                 input message: "Do you want to apply the plan?",
-        //                 parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
-        //         }
-        //     }
-        // }
-        // stage ('terraform_apply') {
-        //     steps {
-        //         echo 'running apply stage'
-        //         sh """
-        //             pwd;terraform apply -input=false tfplan
-        //             """ 
-        //     }
-        // }
     }
 }
