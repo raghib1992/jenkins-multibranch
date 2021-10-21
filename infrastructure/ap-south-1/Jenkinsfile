@@ -8,14 +8,19 @@ pipeline {
     stages {
         stage('loop'){
             steps{
+                echo "Running loop job"
                 script {
                     map.each { entry ->
                         stage (entry.key) {
-                            sh """
-                                echo REGION = \\\"${entry.value}\\\" >> terraform.tfvars
-                                """
+                            dir('infrastructure/ap-south-1/') {
+                                sh """
+                                    echo region = \\\"${entry.value}\\\" >> terraform.tfvars
+                                    terraform init
+                                    terraform plan -out tfplan -input=false
+                                    terraform show tfplan >> tfplan.txt
+                                    """
+                            }
                         }
-
                     }
                 }
             }
