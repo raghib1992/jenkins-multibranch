@@ -1,27 +1,57 @@
-def map = [
-    "mumbai" : "ap-south-1",
-    "seoul"  : "ap-northeast-2"
-]
+// def map = [
+//     "mumbai" : "ap-south-1",
+//     "seoul"  : "ap-northeast-2"
+// ]
 pipeline {
     agent any
 
     stages {
-        stage('loop'){
-            steps{
-                echo "Running loop job"
+        stage ('Init') {
+            steps {
+                echo "initializing terraform"
                 script {
-                    map.each { entry ->
-                        stage (entry.key) {
-                            dir('infrastructure/ap-south-1/') {
-                                sh """
-                                    echo region = \\\"${entry.value}\\\" >> terraform.tfvars
-                                    terraform init
-                                    terraform plan -out tfplan -input=false
-                                    terraform show tfplan >> tfplan.txt
-                                    """
-                            }
-                        }
+                    dir('infrastructure/ap-south-1/') {
+                        sh """
+                            terraform init
+                            """
                     }
+                }
+            }
+        }
+        stage ('plan') {
+            steps {
+                echo "terrafor paln"
+                script {
+                    dir('infrastructure/ap-south-1/') {
+                        sh """
+                            terraform plan -out tfplan -input=false
+                            terraform show -no-color tfplan > tfplan.txt
+                            """
+                    }
+                }
+            }
+        }
+        stage ('Approval') {
+            when {
+                not {
+                    equals expected: true, actual: params.autoApproval
+                }
+            }
+            steps {
+                script {
+                    dir('infrastructure/ap-south-1') {
+                        def plan = readFile 'tfplan.txt'
+                        input message: "Do you want to apply the plan?",
+                        parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
+                        }
+                }
+            }
+        }
+        stage ('Apply') {
+            steps {
+                dir('infrastructure/ap-south-1') {
+                    sh """
+                        terraform apply -no-color -input=false tfplan
                 }
             }
         }
