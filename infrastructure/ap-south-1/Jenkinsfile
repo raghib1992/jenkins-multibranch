@@ -58,6 +58,7 @@ pipeline {
                 dir('infrastructure/ap-south-1/') {
                     sh """
                         terraform apply -no-color -input=false tfplan
+                        """
                 }
             }
         }
