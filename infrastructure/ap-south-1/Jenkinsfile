@@ -5,6 +5,12 @@
 pipeline {
     agent any
 
+    parameters {
+        // choice name: 'CITY', choices: cityList, description: 'City for SaaS-global job'
+        // booleanParam(name: 'run_script', defaultValue: false, description: 'when to push the code to to allow not to run script')
+        booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
+    }
+
     stages {
         stage ('Init') {
             steps {
