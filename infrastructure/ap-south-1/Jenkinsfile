@@ -45,7 +45,7 @@ pipeline {
             }
             steps {
                 script {
-                    dir('infrastructure/ap-south-1') {
+                    dir('infrastructure/ap-south-1/') {
                         def plan = readFile 'tfplan.txt'
                         input message: "Do you want to apply the plan?",
                         parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
@@ -55,7 +55,7 @@ pipeline {
         }
         stage ('Apply') {
             steps {
-                dir('infrastructure/ap-south-1') {
+                dir('infrastructure/ap-south-1/') {
                     sh """
                         terraform apply -no-color -input=false tfplan
                 }
