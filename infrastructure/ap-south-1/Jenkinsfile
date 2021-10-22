@@ -86,7 +86,6 @@ pipeline {
                                                     terraform init
                                                     terraform plan -out tfplan -input=false
                                                     terraform show -no-color tfplan > tfplan.txt
-                                                    terraform apply tfplan -auto-approve
                                                     """
                                             }
                                         }
