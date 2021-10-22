@@ -1,7 +1,7 @@
-// def map = [
-//     "mumbai" : "ap-south-1",
-//     "seoul"  : "ap-northeast-2"
-// ]
+def awsRegionMap = [
+    "mumbai" : "ap-south-1",
+    "seoul"  : "ap-northeast-2"
+]
 pipeline {
     agent any
 
@@ -18,27 +18,22 @@ pipeline {
     }
 
     stages {
-        stage ('Init') {
+        stage ('all region loop') {
             steps {
-                echo "initializing terraform"
+                echo "terraform looping into all provided region in awsRegionMap"
                 script {
-                    dir('infrastructure/ap-south-1/') {
-                        sh """
-                            terraform init
-                            """
-                    }
-                }
-            }
-        }
-        stage ('plan') {
-            steps {
-                echo "terraform plan"
-                script {
-                    dir('infrastructure/ap-south-1/') {
-                        sh """
-                            terraform plan -out tfplan -input=false
-                            terraform show -no-color tfplan > tfplan.txt
-                            """
+                    dir ('infrastructure/ap-south-1/') {
+                        awsRegionMap.each { entry ->
+                            stage (entry.key) {
+                                sh """
+                                    echo REGION = \\\"${entry.value}\\\" >> terraform.tfvars
+                                    cat terraform.tfvars
+                                    terraform init
+                                    terraform plan -out tfplan -input=false
+                                    terraform show -no-color tfplan > tfplan.txt
+                                    """
+                            }
+                        }
                     }
                 }
             }
@@ -70,3 +65,32 @@ pipeline {
         }
     }
 }
+
+
+        // stage ('Init') {
+        //     steps {
+        //         echo "initializing terraform"
+        //         script {
+        //             dir('infrastructure/ap-south-1/') {
+        //                 sh """
+        //                     terraform init
+        //                     """
+        //             }
+        //         }
+        //     }
+        // }
+
+
+        // stage ('plan') {
+        //     steps {
+        //         echo "terraform plan"
+        //         script {
+        //             dir('infrastructure/ap-south-1/') {
+        //                 sh """
+        //                     terraform plan -out tfplan -input=false
+        //                     terraform show -no-color tfplan > tfplan.txt
+        //                     """
+        //             }
+        //         }
+        //     }
+        // }
