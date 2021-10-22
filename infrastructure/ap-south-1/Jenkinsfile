@@ -2,6 +2,7 @@ def awsRegionMap = [
     "mumbai" : "ap-south-1",
     "seoul"  : "ap-northeast-2"
 ]
+
 pipeline {
     agent any
 
@@ -11,11 +12,11 @@ pipeline {
         // TF_VAR_nlb_http_health_checks_enabled = "${nlb_http_health_checks}"
     }
 
-    parameters {
+    // parameters {
     //     choice name: 'CITY', choices: cityList, description: 'City for SaaS-global job'
     //     booleanParam(name: 'run_script', defaultValue: false, description: 'when to push the code to to allow not to run script')
-        booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
-    }
+    //     booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
+    // }
 
     stages {
         stage ('all region loop') {
@@ -25,41 +26,16 @@ pipeline {
                     dir ('infrastructure/ap-south-1/') {
                         awsRegionMap.each { entry ->
                             stage (entry.key) {
-                                sh """
-                                    echo REGION = \\\"${entry.value}\\\" > terraform.tfvars
-                                    cat terraform.tfvars
-                                    terraform init
-                                    terraform plan -out tfplan -input=false
-                                    terraform show -no-color tfplan > tfplan.txt
-                                    """
+                                stages {
+                                    stage "Init" {
+                                        steps {
+                                            echo "$entry.value"
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                }
-            }
-        }
-        stage ('Approval') {
-            when {
-                not {
-                    equals expected: true, actual: params.autoApproval
-                }
-            }
-            steps {
-                script {
-                    dir('infrastructure/ap-south-1/') {
-                        def plan = readFile 'tfplan.txt'
-                        input message: "Do you want to apply the plan?",
-                        parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
-                        }
-                }
-            }
-        }
-        stage ('Apply') {
-            steps {
-                dir('infrastructure/ap-south-1/') {
-                    sh """
-                        terraform apply -no-color -input=false tfplan
-                        """
                 }
             }
         }
@@ -91,6 +67,34 @@ pipeline {
         //                     terraform show -no-color tfplan > tfplan.txt
         //                     """
         //             }
+        //         }
+        //     }
+        // }
+
+
+        // stage ('Approval') {
+        //     when {
+        //         not {
+        //             equals expected: true, actual: params.autoApproval
+        //         }
+        //     }
+        //     steps {
+        //         script {
+        //             dir('infrastructure/ap-south-1/') {
+        //                 def plan = readFile 'tfplan.txt'
+        //                 input message: "Do you want to apply the plan?",
+        //                 parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
+        //                 }
+        //         }
+        //     }
+        // }
+
+        // stage ('Apply') {
+        //     steps {
+        //         dir('infrastructure/ap-south-1/') {
+        //             sh """
+        //                 terraform apply -no-color -input=false tfplan
+        //                 """
         //         }
         //     }
         // }
