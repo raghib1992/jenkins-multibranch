@@ -28,7 +28,9 @@ pipeline {
                     }
                     stages {
                         stage ('Initializing') {
-                            echo "single region"
+                            steps {
+                                echo "single region"
+                            }
                         }
                     }
                 }
