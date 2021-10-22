@@ -1,7 +1,7 @@
-// def awsRegionMap = [
-//     "mumbai" : "ap-south-1",
-//     "seoul"  : "ap-northeast-2"
-// ]
+def awsRegionMap = [
+    "mumbai" : "ap-south-1",
+    "seoul"  : "ap-northeast-2"
+]
 
 pipeline {
     agent any
@@ -75,7 +75,16 @@ pipeline {
                     stages {
                         stage ('Terraform loop') {
                             steps {
-                                echo "all region"
+                                echo "terraform looping into all provided region in awsRegionMap"
+                                script {
+                                    dir ('infrastructure/ap-south-1/') {
+                                        awsRegionMap.each { entry ->
+                                            stage (entry.key) {
+                                                echo "$entry.value"
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
