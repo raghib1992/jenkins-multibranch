@@ -12,27 +12,34 @@ pipeline {
         // TF_VAR_nlb_http_health_checks_enabled = "${nlb_http_health_checks}"
     }
 
-    // parameters {
+    parameters {
+        booleanParam(name: "APPLY_TO_LOOP", defaultValue: false, description: "Select if you want to deploy to all region")
     //     choice name: 'CITY', choices: cityList, description: 'City for SaaS-global job'
     //     booleanParam(name: 'run_script', defaultValue: false, description: 'when to push the code to to allow not to run script')
     //     booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
-    // }
+    }
 
     stages {
-        stage ('all region loop') {
-            steps {
-                echo "terraform looping into all provided region in awsRegionMap"
-                script {
-                    dir ('infrastructure/ap-south-1/') {
-                        awsRegionMap.each { entry ->
-                            stage (entry.key) {
-                                stages {
-                                    stage "Init" {
-                                        steps {
-                                            echo "$entry.value"
-                                        }
-                                    }
-                                }
+        stage ('Deploy to sc-saas-global') {
+            parallel {
+                stage ("Deploy to Single Region") {
+                    when {
+                        expression { !params.APPLY_TO_LOOP}
+                    }
+                    stages {
+                        stage ('Initializing') {
+                            echo "single region"
+                        }
+                    }
+                }
+                stage("Deploy to all Region") {
+                    when {
+                        expression { params.APPLY_TO_LOOP }
+                    }
+                    stages {
+                        stage ('Terraform loop') {
+                            steps {
+                                echo "all region"
                             }
                         }
                     }
@@ -98,3 +105,26 @@ pipeline {
         //         }
         //     }
         // }
+
+    //     stages {
+    //     stage ('all region loop') {
+    //         steps {
+    //             echo "terraform looping into all provided region in awsRegionMap"
+    //             script {
+    //                 dir ('infrastructure/ap-south-1/') {
+    //                     awsRegionMap.each { entry ->
+    //                         stage (entry.key) {
+    //                             stages {
+    //                                 stage "Init" {
+    //                                     steps {
+    //                                         echo "$entry.value"
+    //                                     }
+    //                                 }
+    //                             }
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
