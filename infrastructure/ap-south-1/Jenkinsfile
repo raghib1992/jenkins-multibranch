@@ -26,7 +26,7 @@ pipeline {
                         awsRegionMap.each { entry ->
                             stage (entry.key) {
                                 sh """
-                                    echo REGION = \\\"${entry.value}\\\" > terraform.tfvars
+                                    echo REGION = \\\"${entry.value}\\\" >> terraform.tfvars
                                     cat terraform.tfvars
                                     """
                             }
