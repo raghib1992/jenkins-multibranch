@@ -11,11 +11,11 @@ pipeline {
         // TF_VAR_nlb_http_health_checks_enabled = "${nlb_http_health_checks}"
     }
 
-    parameters {
-        // choice name: 'CITY', choices: cityList, description: 'City for SaaS-global job'
-        // booleanParam(name: 'run_script', defaultValue: false, description: 'when to push the code to to allow not to run script')
-        booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
-    }
+    // parameters {
+    //     choice name: 'CITY', choices: cityList, description: 'City for SaaS-global job'
+    //     booleanParam(name: 'run_script', defaultValue: false, description: 'when to push the code to to allow not to run script')
+    //     booleanParam(name: 'autoApprove', defaultValue: false, description: 'Automatically run apply after generating plan?')
+    // }
 
     stages {
         stage ('all region loop') {
@@ -30,7 +30,7 @@ pipeline {
                                     cat terraform.tfvars
                                     terraform init
                                     terraform plan -out tfplan -input=false
-                                    terraform show -no-color tfplan > tfplan.txt
+                                    // terraform show -no-color tfplan > tfplan.txt
                                     terraform apply tfplan -input=false
                                     """
                             }
