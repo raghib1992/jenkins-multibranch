@@ -80,7 +80,10 @@ pipeline {
                                     dir ('infrastructure/ap-south-1/') {
                                         awsRegionMap.each { entry ->
                                             stage (entry.key) {
-                                                echo "$entry.value"
+                                                sh """
+                                                    echo REGION =\\\"${entry.value}\\\" >> terraform.tfvars
+                                                    cat terraform.tfvars
+                                                    """
                                             }
                                         }
                                     }
