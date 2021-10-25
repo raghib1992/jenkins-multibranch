@@ -88,31 +88,31 @@ pipeline {
                                                     terraform show -no-color tfplan > tfplan.txt
                                                     """
                                             }
-                                            stage ('Approval') {
-                                                when {
-                                                    not {
-                                                        equals expected: true, actual: params.autoApproval
-                                                    }
-                                                }
-                                                steps {
-                                                    script {
-                                                        dir('infrastructure/ap-south-1/') {
-                                                            def plan = readFile 'tfplan.txt'
-                                                            input message: "Do you want to apply the plan?",
-                                                            parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
-                                                            }
-                                                    }
-                                                }
-                                            }
-                                            stage ('Apply') {
-                                                steps {
-                                                    dir('infrastructure/ap-south-1/') {
-                                                        sh """
-                                                            terraform apply -no-color -input=false tfplan
-                                                            """
-                                                    }
-                                                }
-                                            }
+                                            // stage ('Approval') {
+                                            //     when {
+                                            //         not {
+                                            //             equals expected: true, actual: params.autoApproval
+                                            //         }
+                                            //     }
+                                            //     steps {
+                                            //         script {
+                                            //             dir('infrastructure/ap-south-1/') {
+                                            //                 def plan = readFile 'tfplan.txt'
+                                            //                 input message: "Do you want to apply the plan?",
+                                            //                 parameters: [text(name: 'Plan', description: 'Please review the plan', defaultValue: plan)]
+                                            //                 }
+                                            //         }
+                                            //     }
+                                            // }
+                                            // stage ('Apply') {
+                                            //     steps {
+                                            //         dir('infrastructure/ap-south-1/') {
+                                            //             sh """
+                                            //                 terraform apply -no-color -input=false tfplan
+                                            //                 """
+                                            //         }
+                                            //     }
+                                            // }
                                         }
                                     }
                                 }
