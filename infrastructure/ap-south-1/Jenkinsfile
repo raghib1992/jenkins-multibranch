@@ -92,13 +92,9 @@ pipeline {
                                                 input "Deploy to all loop?"
                                             }
                                             stage ('Apply') {
-                                                steps {
-                                                    dir('infrastructure/ap-south-1/') {
-                                                        sh """
-                                                            terraform apply -no-color -input=false tfplan
-                                                            """
-                                                    }
-                                                }
+                                                sh """
+                                                    terraform apply -no-color -input=false tfplan
+                                                    """
                                             }
                                         }
                                     }
