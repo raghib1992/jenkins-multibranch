@@ -82,7 +82,7 @@ pipeline {
                                             stage (entry.key) {
                                                 sh """
                                                     echo REGION =\\\"${entry.value}\\\" > terraform.tfvars
-                                                    cat terraformform init
+                                                    cat terraform.tfvars
                                                     terraform init
                                                     terraform plan -out tfplan -input=false
                                                     terraform show -no-color tfplan > tfplan.txt
